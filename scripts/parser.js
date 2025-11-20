@@ -1,5 +1,5 @@
 (function () {
-  const DEFAULT_SELECTORS = ["main", "article", ".content"];
+  const DEFAULT_SELECTORS = ["main", "article", ".content", "[role=main]", "[class*=content]"];
 
   function stripHash(url) {
     try {
@@ -62,7 +62,35 @@
 
   function sanitizeContent(doc, pageUrl, config) {
     const { contentSelector, excludeSelectors } = config;
-    const target = selectContent(doc, contentSelector || DEFAULT_SELECTORS);
+    const selectors = contentSelector || DEFAULT_SELECTORS;
+    let target = selectContent(doc, selectors);
+    if (!target) {
+      // 备用：尝试多种容器并选取文本最长的节点
+      const fallbackSelectors = [
+        "main",
+        "article",
+        "[role=main]",
+        "[class*=content]",
+        "[class*=markdown]",
+        ".theme-doc-markdown",
+        ".docMainWrapper",
+        "section",
+      ];
+      const candidates = Array.from(doc.querySelectorAll(fallbackSelectors.join(",")));
+      let best = null;
+      let bestLen = 0;
+      candidates.forEach((node) => {
+        const clone = node.cloneNode(true);
+        stripScripts(clone);
+        removeUnwanted(clone, excludeSelectors || []);
+        const len = (clone.textContent || "").trim().length;
+        if (len > bestLen) {
+          bestLen = len;
+          best = clone;
+        }
+      });
+      target = best;
+    }
     if (!target) return null;
     stripScripts(target);
     removeUnwanted(target, excludeSelectors || []);
