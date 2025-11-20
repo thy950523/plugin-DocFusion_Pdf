@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocuPrint</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup">
+    <header>
+      <div class="title">DocFusion PDF</div>
+      <div class="subtitle">当前识别：interviewguide.dev</div>
+    </header>
+    <main>
+      <div class="status" id="statusText">点击开始抓取</div>
+      <div class="progress" id="progressContainer" aria-hidden="true">
+        <div class="bar" id="progressBar"></div>
+        <div class="progress-label" id="progressLabel">0%</div>
+      </div>
+    </main>
+    <footer>
+      <button id="startBtn">开始抓取</button>
+      <button id="cancelBtn" class="ghost" disabled>取消</button>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
